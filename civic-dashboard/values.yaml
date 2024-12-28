@@ -1,22 +1,22 @@
 images:
   dataFetcher:
     repository: ghcr.io/civic-dashboard/data-fetcher
-    tag: main-09abb227b5efaaeab72899c98949e4d0c6187106                       
+    tag: main-4859ebe4f5947285791042458cc0a61775bef132                       
     pullPolicy: IfNotPresent
 
   dataStore:
     repository: ghcr.io/civic-dashboard/data-store
-    tag: main-09abb227b5efaaeab72899c98949e4d0c6187106                       
+    tag: main-4859ebe4f5947285791042458cc0a61775bef132                       
     pullPolicy: IfNotPresent
 
   syncElastic:
     repository: ghcr.io/civic-dashboard/sync-elastic
-    tag: main-09abb227b5efaaeab72899c98949e4d0c6187106             
+    tag: main-4859ebe4f5947285791042458cc0a61775bef132             
     pullPolicy: IfNotPresent
 
   searchApi:
     repository: ghcr.io/civic-dashboard/search-api
-    tag: main-09abb227b5efaaeab72899c98949e4d0c6187106             
+    tag: main-4859ebe4f5947285791042458cc0a61775bef132             
     pullPolicy: IfNotPresent
 
   postgres:
@@ -31,7 +31,7 @@ images:
 
   elasticsearch:
     repository: docker.elastic.co/elasticsearch/elasticsearch
-    tag: 8.16.1
+    tag: 8.17.0
     pullPolicy: IfNotPresent
     
 imagePullSecrets:
