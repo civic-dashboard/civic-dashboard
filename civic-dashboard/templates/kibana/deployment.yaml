@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "civic-dashboard.name" . }}-kibana
+  labels:
+    app.kubernetes.io/name: {{ include "civic-dashboard.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: kibana
+spec:
+  replicas: {{ .Values.kibana.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "civic-dashboard.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: kibana
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "civic-dashboard.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: "{{ .Values.images.kibana.repository }}:{{ .Values.images.kibana.tag }}"
+          imagePullPolicy: {{ .Values.images.kibana.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.kibana.containerPort }}
+          volumeMounts:
+            - name: kibana-config
+              mountPath: /usr/share/kibana/config/kibana.yml
+              subPath: kibana.yml
+      volumes:
+        - name: kibana-config
+          configMap:
+            name: {{ include "civic-dashboard.name" . }}-kibana-config

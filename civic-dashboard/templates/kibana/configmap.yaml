@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "civic-dashboard.name" . }}-kibana-config
+  labels:
+    app.kubernetes.io/name: {{ include "civic-dashboard.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: kibana
+data:
+  kibana.yml: |
+    server.host: "0.0.0.0"
+    elasticsearch.hosts: ["http://{{ include "civic-dashboard.name" . }}-elasticsearch:9200"]
+    monitoring.ui.container.elasticsearch.enabled: false
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "civic-dashboard.name" . }}-kibana-config
+  labels:
+    app.kubernetes.io/name: {{ include "civic-dashboard.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: kibana
+data:
+  kibana.yml: |
+    server.host: "0.0.0.0"
+    elasticsearch.hosts: ["http://{{ include "civic-dashboard.name" . }}-elasticsearch:9200"]
+    monitoring.ui.container.elasticsearch.enabled: false
