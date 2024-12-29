@@ -18,6 +18,13 @@ jobs:
     strategy:
       matrix:
         component: [data-fetcher, data-store, sync-elastic]
+        include:
+          - component: data-fetcher
+            path: "services/data-fetcher/**"
+          - component: data-store
+            path: "services/data-store/**"
+          - component: sync-elastic
+            path: "services/sync-elastic/**"
 
     steps:
       - name: Checkout Code
