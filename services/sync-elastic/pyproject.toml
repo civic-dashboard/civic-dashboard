@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "sync-elastic"
 version = "0.1.0"
-description = ""
+description = "A microservice for syncing PostgreSQL data into Elasticsearch."
 authors = ["razboy <mishaneiman@gmail.com>"]
 readme = "README.md"
+license = "MIT"
+homepage = "https://github.com/your-repo/sync-elastic"
+keywords = ["PostgreSQL", "Elasticsearch", "data-sync", "microservice"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -13,6 +16,10 @@ psycopg2-binary = "^2.9.10"
 requests = "^2.32.3"
 gunicorn = "^23.0.0"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+flake8 = "^6.1.0"
+black = "^23.9.1"
 
 [build-system]
 requires = ["poetry-core"]
