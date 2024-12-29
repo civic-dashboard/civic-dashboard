@@ -1,4 +1,4 @@
-name: Build, Scan, and Publish Docker Images
+name: Push Images to GHCR (Main)
 
 on:
   push:

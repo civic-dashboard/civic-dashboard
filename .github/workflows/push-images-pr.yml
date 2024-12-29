@@ -1,4 +1,4 @@
-name: Build, Scan, and Publish Docker Images
+name: Push Images to GHCR (PR)
 
 on:
   pull_request:

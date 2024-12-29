@@ -1,10 +1,12 @@
 name: Test Helm Deployment
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_run:
+    workflows:
+      - Push Images to GHCR (Main)
+      - Push Images to GHCR (PR)
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -44,7 +46,13 @@ jobs:
             --atomic \
             --cleanup-on-fail \
             --timeout 300s \
-            --values ./civic-dashboard/values.yaml
+            --values ./civic-dashboard/values.yaml \
+            --set-string images.dataFetcher.repository=ghcr.io/${{ github.repository_owner }}/data-fetcher \
+            --set-string images.dataFetcher.tag=${{ github.sha }} \
+            --set-string images.dataStore.repository=ghcr.io/${{ github.repository_owner }}/data-store \
+            --set-string images.dataStore.tag=${{ github.sha }} \
+            --set-string images.syncElastic.repository=ghcr.io/${{ github.repository_owner }}/sync-elastic \
+            --set-string images.syncElastic.tag=${{ github.sha }}
         shell: bash
 
       - name: Verify Deployment
@@ -53,6 +61,7 @@ jobs:
           kubectl rollout status deployment/civic-dashboard-postgres -n civic-dashboard
           kubectl rollout status deployment/civic-dashboard-data-fetcher -n civic-dashboard
           kubectl rollout status deployment/civic-dashboard-data-store -n civic-dashboard
+          kubectl rollout status deployment/civic-dashboard-sync-elastic -n civic-dashboard
         shell: bash
 
       - name: Wait for Pods to be Ready
@@ -67,6 +76,8 @@ jobs:
           kubectl run -n civic-dashboard curl-pod --image=curlimages/curl:latest --rm -i --restart=Never -- \
             sh -c "
               curl -f http://civic-dashboard-data-fetcher:5000/healthz
+              curl -f http://civic-dashboard-data-store:5000/healthz
+              curl -f http://civic-dashboard-sync-elastic:5000/healthz
             "
           echo "All endpoints are healthy!"
         shell: bash
