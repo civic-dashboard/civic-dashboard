@@ -33,6 +33,14 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Verify Images Exist in Registry
+        run: |
+          echo "Verifying image existence in registry..."
+          docker manifest inspect ghcr.io/${{ github.repository_owner }}/data-fetcher:${{ github.sha }} || exit 1
+          docker manifest inspect ghcr.io/${{ github.repository_owner }}/data-store:${{ github.sha }} || exit 1
+          docker manifest inspect ghcr.io/${{ github.repository_owner }}/sync-elastic:${{ github.sha }} || exit 1
+          echo "All images exist in the registry."
+
       - name: Ensure Namespace Exists
         run: |
           kubectl get namespace civic-dashboard || kubectl create namespace civic-dashboard
