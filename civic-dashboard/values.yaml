@@ -14,6 +14,11 @@ images:
     tag: main-aadd573d1001fb4f7feceba94827fccc3e182ca1             
     pullPolicy: IfNotPresent
 
+  searchApi:
+    repository: ghcr.io/civic-dashboard/search-api
+    tag: main-aadd573d1001fb4f7feceba94827fccc3e182ca1             
+    pullPolicy: IfNotPresent
+
   postgres:
     repository: postgres
     tag: 17.2
@@ -48,6 +53,12 @@ dataStore:
   containerPort: 5000
 
 syncElastic:
+  replicas: 1
+  containerPort: 5000
+  servicePort: 5000
+  serviceType: ClusterIP
+
+searchApi:
   replicas: 1
   containerPort: 5000
   servicePort: 5000
