@@ -1,4 +1,4 @@
-name: Push Images (Pull Request)
+name: Build and Push Docker Images (PR)
 
 on:
   pull_request:
