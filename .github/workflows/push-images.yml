@@ -1,4 +1,4 @@
-name: Push Images (Main)
+name: Build, Scan, and Publish Docker Images
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  packages: write
+  packages: write   # Ensure write access to GHCR
 
 jobs:
   build-and-push:
@@ -17,36 +17,37 @@ jobs:
 
     strategy:
       matrix:
-        component: [data-fetcher, data-store, sync-elastic]
+        component: [data-fetcher, data-store, sync-elastic, search-api]
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4.2.2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3.7.1
 
       - name: Cache Docker layers
-        uses: actions/cache@v4
+        uses: actions/cache@v4.1.2
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.3.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}  # Use GITHUB_TOKEN for authentication
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v6
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6.9.0
         with:
           context: services/${{ matrix.component }}
           push: true
+          load: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:main-${{ github.sha }}
+            ghcr.io/${{  github.repository_owner }}/${{ matrix.component }}:${{ github.ref_name }}-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

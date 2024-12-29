@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sync-elastic"
+name = "search"
 version = "0.1.0"
 description = ""
 authors = ["razboy <mishaneiman@gmail.com>"]
@@ -8,10 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 flask = "^3.1.0"
-elasticsearch = "^8.16.0"
-psycopg2-binary = "^2.9.10"
-requests = "^2.32.3"
 gunicorn = "^23.0.0"
+elasticsearch = "^8.16.0"
 
 
 [build-system]
