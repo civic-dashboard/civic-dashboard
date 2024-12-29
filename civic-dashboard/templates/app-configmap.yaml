@@ -20,7 +20,3 @@ data:
   # ElasticSearch Configurations
   ES_HOST: {{ include "civic-dashboard.name" . }}-elasticsearch
   ES_PORT: "{{ .Values.elasticsearch.servicePort }}"
-
-  # Search API Configurations
-  SEARCH_API_HOST: {{ include "civic-dashboard.name" . }}-search-api
-  SEARCH_API_PORT: "{{ .Values.searchApi.servicePort }}"
