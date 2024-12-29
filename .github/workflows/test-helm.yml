@@ -1,19 +1,16 @@
 name: Test Helm Deployment
 
 on:
-  workflow_run:
-    workflows:
-      - Build and Push Docker Images (Main)
-      - Build and Push Docker Images (PR)
-    types:
-      - completed
+  push:
+    branches:
+      - main
+  pull_request:
 
 permissions:
   contents: write
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -81,7 +78,7 @@ jobs:
         run: |
           kubectl run -n civic-dashboard curl-pod --image=curlimages/curl:latest --rm -i --restart=Never -- \
             sh -c "
-              curl -f http://civic-dashboard-data-fetcher:5000/healthz &&
-              curl -f http://civic-dashboard-data-store:5000/healthz &&
+              curl -f http://civic-dashboard-data-fetcher:5000/healthz
+              curl -f http://civic-dashboard-data-store:5000/healthz
               curl -f http://civic-dashboard-sync-elastic:5000/healthz
             "
