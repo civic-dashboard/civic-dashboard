@@ -1,22 +1,22 @@
 images:
   dataFetcher:
     repository: ghcr.io/civic-dashboard/data-fetcher
-    tag: main-09abb227b5efaaeab72899c98949e4d0c6187106                       
+    tag: main-aadd573d1001fb4f7feceba94827fccc3e182ca1                       
     pullPolicy: IfNotPresent
 
   dataStore:
     repository: ghcr.io/civic-dashboard/data-store
-    tag: main-09abb227b5efaaeab72899c98949e4d0c6187106                       
+    tag: main-aadd573d1001fb4f7feceba94827fccc3e182ca1                       
     pullPolicy: IfNotPresent
 
   syncElastic:
     repository: ghcr.io/civic-dashboard/sync-elastic
-    tag: main-09abb227b5efaaeab72899c98949e4d0c6187106             
+    tag: main-aadd573d1001fb4f7feceba94827fccc3e182ca1             
     pullPolicy: IfNotPresent
 
   searchApi:
     repository: ghcr.io/civic-dashboard/search-api
-    tag: main-09abb227b5efaaeab72899c98949e4d0c6187106             
+    tag: main-aadd573d1001fb4f7feceba94827fccc3e182ca1             
     pullPolicy: IfNotPresent
 
   postgres:
@@ -31,6 +31,11 @@ images:
 
   elasticsearch:
     repository: docker.elastic.co/elasticsearch/elasticsearch
+    tag: 8.16.1
+    pullPolicy: IfNotPresent
+
+  kibana:
+    repository: docker.elastic.co/kibana/kibana
     tag: 8.16.1
     pullPolicy: IfNotPresent
     
@@ -83,6 +88,13 @@ elasticsearch:
       elasticsearch.yml: |
         xpack.security.enabled: false
         xpack.security.http.ssl.enabled: false
+
+kibana:
+  replicas: 1
+  containerPort: 5601
+  servicePort: 5601
+  serviceType: ClusterIP
+  elasticsearchURL: "http://{{ include 'civic-dashboard.name' . }}-elasticsearch:9200"
 
 secrets:
   dataFetcher:
