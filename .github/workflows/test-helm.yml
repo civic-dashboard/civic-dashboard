@@ -56,7 +56,7 @@ jobs:
 
       - name: Probe Endpoints
         run: |
-          kubectl -n civic-dashboard run curl-pod --image=curlimages/curl:latest --rm -i --restart=Never -- \
+          kubectl run -n civic-dashboard curl-pod --image=curlimages/curl:latest --rm -i --restart=Never -- \
             curl -f http://civic-dashboard-data-fetcher:5000/healthz
             curl -f http://civic-dashboard-data-store:5000/healthz
           echo "All endpoints are healthy!"
