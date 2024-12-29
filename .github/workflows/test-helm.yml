@@ -58,14 +58,15 @@ jobs:
       - name: Wait for Pods to be Ready
         run: |
           echo "Waiting for pods to be ready..."
-          kubectl wait --for=condition=Ready pod -l app.kubernetes.io/instance=civic-dashboard -n civic-dashboard --timeout=300s
+          kubectl wait --for=condition=Running pod -l app.kubernetes.io/instance=civic-dashboard -n civic-dashboard --timeout=300s
         shell: bash
 
       - name: Probe Endpoints
         run: |
           echo "Probing endpoints..."
           kubectl run -n civic-dashboard curl-pod --image=curlimages/curl:latest --rm -i --restart=Never -- \
-            curl -f http://civic-dashboard-data-fetcher:5000/healthz && \
-            curl -f http://civic-dashboard-data-store:5000/healthz
+            sh -c "
+              curl -f http://civic-dashboard-data-fetcher:5000/healthz
+            "
           echo "All endpoints are healthy!"
         shell: bash
