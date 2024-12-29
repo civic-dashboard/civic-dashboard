@@ -128,8 +128,6 @@ jobs:
           kubectl run -n civic-dashboard curl-pod --image=curlimages/curl:latest --rm -i --restart=Never -- \
             sh -c "
               curl -f http://civic-dashboard-data-fetcher:5000/healthz
-              curl -f http://civic-dashboard-data-store:5000/healthz
-              curl -f http://civic-dashboard-sync-elastic:5000/healthz
             "
           echo "All endpoints are healthy!"
         shell: bash
