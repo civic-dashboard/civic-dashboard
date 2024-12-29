@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        component: [data-fetcher, data-store, sync-elastic, search-api]
+        component: [data-fetcher, data-store, sync-elastic]
 
     steps:
       - name: Checkout Repository
