@@ -52,6 +52,7 @@ jobs:
           kubectl rollout status deployment/civic-dashboard-elasticsearch -n civic-dashboard
           kubectl rollout status deployment/civic-dashboard-postgres -n civic-dashboard
           kubectl rollout status deployment/civic-dashboard-data-fetcher -n civic-dashboard
+          kubectl rollout status deployment/civic-dashboard-data-store -n civic-dashboard
         shell: bash
 
       - name: Probe Endpoints
