@@ -35,8 +35,6 @@ spec:
             timeoutSeconds: 1
             successThreshold: 1
             failureThreshold: 3
-      imagePullSecrets:
-        - name: ghcr-secret
   resources:
     requests:
       memory: "1G"

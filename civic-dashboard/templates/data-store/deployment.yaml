@@ -41,5 +41,3 @@ spec:
             - secretRef:
                 name: {{ include "civic-dashboard.name" . }}-secrets
       restartPolicy: Always
-      imagePullSecrets:
-        - name: ghcr-secret
