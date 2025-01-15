@@ -16,8 +16,7 @@ WORKDIR /app
 
 # Copy dependency files and install dependencies
 COPY poetry.lock pyproject.toml README.md /app/
-RUN poetry config virtualenvs.create false \
-    && poetry install --only main --no-root
+RUN poetry config virtualenvs.create false && poetry lock && poetry install --only main --no-root
 
 # Copy the application code
 COPY app/ /app/
