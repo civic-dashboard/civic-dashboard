@@ -94,3 +94,10 @@ secrets:
     password: 'test_password'
   pgadmin:
     password: 'admin'
+
+test:
+  endpoints:
+    - http://civic-dashboard-data-fetcher.civic-dashboard.svc.cluster.local:5000/healthz
+    - http://civic-dashboard-data-store.civic-dashboard.svc.cluster.local:8000/healthz
+    - http://civic-dashboard-sync-elastic.civic-dashboard.svc.cluster.local:5000/healthz
+
