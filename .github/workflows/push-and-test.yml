@@ -78,7 +78,7 @@ jobs:
             --create-namespace \
             --atomic \
             --cleanup-on-fail \
-            --timeout 10m \
+            --wait \
             --values ./civic-dashboard/values.yaml \
             --set-string images.dataFetcher.repository=ghcr.io/${{ github.repository_owner }}/data-fetcher \
             --set-string images.dataFetcher.tag=${{ github.event_name == 'push' && 'main' || github.head_ref }}-${{ github.sha }} \
