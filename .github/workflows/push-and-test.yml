@@ -73,6 +73,17 @@ jobs:
         uses: azure/setup-helm@v4.2.0
         with:
           version: v3.17.0
+          
+      - name: Validate Image Tags
+        run: |
+          echo "Validating image tags..."
+          components=(data-fetcher data-store sync-elastic)
+          for component in "${components[@]}"; do
+            image=ghcr.io/${{ github.repository_owner }}/$component:${{ github.sha }}
+            echo "Checking $image..."
+            docker manifest inspect $image || { echo "Image $image not found!" && exit 1; }
+          done
+          echo "All image tags are valid."
 
       - name: Deploy Helm Chart
         run: |
