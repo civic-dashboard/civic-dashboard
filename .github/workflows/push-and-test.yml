@@ -68,6 +68,7 @@ jobs:
         uses: helm/kind-action@v1.12.0
         with:
           version: v0.26.0
+
       - name: Install Helm
         uses: azure/setup-helm@v4.2.0
         with:
@@ -82,13 +83,7 @@ jobs:
             --cleanup-on-fail \
             --wait \
             --debug \
-            --values ./civic-dashboard/values.yaml \
-            --set-string images.dataFetcher.repository=ghcr.io/${{ github.repository_owner }}/data-fetcher \
-            --set-string images.dataFetcher.tag=${{ github.sha }} \
-            --set-string images.dataStore.repository=ghcr.io/${{ github.repository_owner }}/data-store \
-            --set-string images.dataStore.tag=${{ github.sha }} \
-            --set-string images.syncElastic.repository=ghcr.io/${{ github.repository_owner }}/sync-elastic \
-            --set-string images.syncElastic.tag=${{ github.sha }}
+            --values ./civic-dashboard/values.yaml
 
       - name: Run Helm Tests
         run: |
