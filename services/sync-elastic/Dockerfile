@@ -38,7 +38,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Copy the application from the builder stage
-COPY --from=builder /app /app
+COPY --from=builder /usr/local usr/local
+COPY --from=builder /app /app 
 
 # Change ownership to the non-root user
 RUN chown -R appuser:appuser /app
