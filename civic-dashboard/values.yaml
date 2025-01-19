@@ -1,17 +1,17 @@
 images:
   dataFetcher:
     repository: ghcr.io/civic-dashboard/data-fetcher
-    tag: main-35ba5729e5d60154cc02ba859cf34305b9d62214                       
+    tag: try-fix-build-test-86dd98320fae7a959481bfc819845bfe1e353388                       
     pullPolicy: IfNotPresent
 
   dataStore:
     repository: ghcr.io/civic-dashboard/data-store
-    tag: main-35ba5729e5d60154cc02ba859cf34305b9d62214                       
+    tag: try-fix-build-test-86dd98320fae7a959481bfc819845bfe1e353388                       
     pullPolicy: IfNotPresent
 
   syncElastic:
     repository: ghcr.io/civic-dashboard/sync-elastic
-    tag: main-35ba5729e5d60154cc02ba859cf34305b9d62214             
+    tag: try-fix-build-test-86dd98320fae7a959481bfc819845bfe1e353388             
     pullPolicy: IfNotPresent
 
   postgres:
@@ -94,3 +94,10 @@ secrets:
     password: 'test_password'
   pgadmin:
     password: 'admin'
+
+test:
+  endpoints:
+    - http://civic-dashboard-data-fetcher.civic-dashboard.svc.cluster.local:5000/healthz
+    - http://civic-dashboard-data-store.civic-dashboard.svc.cluster.local:8000/healthz
+    - http://civic-dashboard-sync-elastic.civic-dashboard.svc.cluster.local:5000/healthz
+

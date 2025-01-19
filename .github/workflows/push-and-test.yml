@@ -26,10 +26,10 @@ jobs:
         uses: actions/checkout@v4.2.2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.7.1
+        uses: docker/setup-buildx-action@v3.8.0
 
       - name: Cache Docker layers
-        uses: actions/cache@v4.1.2
+        uses: actions/cache@v4.2.0
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -41,10 +41,10 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}  # Use GITHUB_TOKEN for authentication
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v6.9.0
+        uses: docker/build-push-action@v6.12.0
         with:
           context: services/${{ matrix.component }}
           push: true
@@ -64,31 +64,25 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4.2.2
 
-      - name: Set up Kind
+      - name: Set up Kind Cluster
         uses: helm/kind-action@v1.12.0
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4.0.0
         with:
-          version: 'latest'
-
-      - name: Set up Helm
+          version: v0.26.0
+          
+      - name: Install Helm
         uses: azure/setup-helm@v4.2.0
         with:
-          version: 'latest'
+          version: v3.17.0
 
-      - name: Verify Images Exist in Registry
+      - name: Validate Image Tags
         run: |
-          echo "Verifying image existence in registry..."
-          docker manifest inspect ghcr.io/${{ github.repository_owner }}/data-fetcher:${{ github.event_name == 'push' && 'main' || github.head_ref }}-${{ github.sha }} || exit 1
-          docker manifest inspect ghcr.io/${{ github.repository_owner }}/data-store:${{ github.event_name == 'push' && 'main' || github.head_ref }}-${{ github.sha }} || exit 1
-          docker manifest inspect ghcr.io/${{ github.repository_owner }}/sync-elastic:${{ github.event_name == 'push' && 'main' || github.head_ref }}-${{ github.sha }} || exit 1
-          echo "All images exist in the registry."
-
-      - name: Ensure Namespace Exists
-        run: |
-          kubectl get namespace civic-dashboard || kubectl create namespace civic-dashboard
-        shell: bash
+          components=(data-fetcher data-store sync-elastic)
+          for component in "${components[@]}"; do
+            tag=${{ github.event_name == 'push' && 'main' || github.head_ref }}-${{ github.sha }}
+            image=ghcr.io/${{ github.repository_owner }}/$component:$tag
+            echo "Validating $image..."
+            docker manifest inspect $image || { echo "Image $image not found!" && exit 1; }
+          done
 
       - name: Deploy Helm Chart
         run: |
@@ -97,7 +91,8 @@ jobs:
             --create-namespace \
             --atomic \
             --cleanup-on-fail \
-            --timeout 300s \
+            --wait \
+            --debug \
             --values ./civic-dashboard/values.yaml \
             --set-string images.dataFetcher.repository=ghcr.io/${{ github.repository_owner }}/data-fetcher \
             --set-string images.dataFetcher.tag=${{ github.event_name == 'push' && 'main' || github.head_ref }}-${{ github.sha }} \
@@ -105,36 +100,8 @@ jobs:
             --set-string images.dataStore.tag=${{ github.event_name == 'push' && 'main' || github.head_ref }}-${{ github.sha }} \
             --set-string images.syncElastic.repository=ghcr.io/${{ github.repository_owner }}/sync-elastic \
             --set-string images.syncElastic.tag=${{ github.event_name == 'push' && 'main' || github.head_ref }}-${{ github.sha }}
-        shell: bash
 
-      - name: Verify Deployment
+      - name: Run Helm Tests
         run: |
-          kubectl rollout status deployment/civic-dashboard-elasticsearch -n civic-dashboard
-          kubectl rollout status deployment/civic-dashboard-postgres -n civic-dashboard
-          kubectl rollout status deployment/civic-dashboard-data-fetcher -n civic-dashboard
-          kubectl rollout status deployment/civic-dashboard-data-store -n civic-dashboard
-          kubectl rollout status deployment/civic-dashboard-sync-elastic -n civic-dashboard
-        shell: bash
-
-      - name: Wait for Pods to be Ready
-        run: |
-          echo "Waiting for pods to be ready..."
-          kubectl wait --for=condition=Ready pod -l app.kubernetes.io/instance=civic-dashboard -n civic-dashboard --timeout=300s
-        shell: bash
-
-      - name: Probe Endpoints
-        run: |
-          echo "Probing endpoints..."
-          kubectl run -n civic-dashboard curl-pod --image=curlimages/curl:latest --rm -i --restart=Never -- \
-            sh -c "
-              set -e;
-              echo 'Probing data-fetcher...';
-              curl -f http://civic-dashboard-data-fetcher:5000/healthz;
-              echo 'Probing data-store...';
-              curl -f http://civic-dashboard-data-store:5000/healthz;
-              echo 'Probing sync-elastic...';
-              curl -f http://civic-dashboard-sync-elastic:5000/healthz;
-            "
-          echo "All endpoints are healthy!"
-        shell: bash
-
+          echo "Running Helm tests...";
+          helm test civic-dashboard --namespace civic-dashboard
